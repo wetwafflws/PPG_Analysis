@@ -56,9 +56,8 @@ A Python application using CustomTkinter to visualize and analyze Photoplethysmo
 
 1.  **Run the Script:**
     ```bash
-    python your_script_name.py
+    python main.py
     ```
-    *(Replace `your_script_name.py` with the actual name you give the Python file)*
 
 2.  **Load Data:**
     * Click the "Load CSV File" button.
