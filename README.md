@@ -36,8 +36,8 @@ A Python application using CustomTkinter to visualize and analyze Photoplethysmo
 
 1.  **Clone the Repository:**
     ```bash
-    git clone <your-repository-url>
-    cd <repository-directory-name>
+    git clone https://github.com/wetwafflws/PPG_Analysis.git
+    cd PPG_Analysis 
     ```
 
 2.  **Create a Virtual Environment (Recommended):**
