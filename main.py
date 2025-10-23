@@ -19,7 +19,7 @@ class PPGVisualizerApp(customtkinter.CTk):
 
         self.title("Infrared PPG Data Visualization (Custom DWT)")
         self.geometry("1000x800") # Initial size, might be expanded by scroll
-        customtkinter.set_appearance_mode("Dark")
+        customtkinter.set_appearance_mode("Light")
         customtkinter.set_default_color_theme("blue")
 
         # --- Make the main window scrollable ---
@@ -311,7 +311,7 @@ class PPGVisualizerApp(customtkinter.CTk):
         self.dwt_option_menu.set(default_dwt_scale)
         self.update_dwt_plot(default_dwt_scale)
 
-        self.rr_option_menu.set("Scale 5")
+        self.rr_option_menu.set("Scale 7")
         self.vr_option_menu.set("Scale 8")
 
     # --- RR Interval Analysis (Time and Freq) ---
@@ -645,15 +645,15 @@ class PPGVisualizerApp(customtkinter.CTk):
             t_level = np.linspace(0, duration_s, len(signal_data))
 
             fig, ax = plt.subplots(figsize=(10, 6))
-            fig.patch.set_facecolor('#2B2B2B')
+            fig.patch.set_facecolor('white')
 
-            ax.plot(t_level, signal_data, color='lime')
+            ax.plot(t_level, signal_data, color='green')
             title = f"DWT d{scale_j} Coefficient (Freq: {f_low:.3f} - {f_high:.3f} Hz)"
-            ax.set_title(title, color='white')
-            ax.set_xlabel("Time (s)", color='white')
-            ax.set_ylabel("Amplitude", color='white')
-            ax.tick_params(colors='white')
-            ax.set_facecolor('#3C3C3C')
+            ax.set_title(title, color='black')
+            ax.set_xlabel("Time (s)", color='black')
+            ax.set_ylabel("Amplitude", color='black')
+            ax.tick_params(colors='black')
+            ax.set_facecolor('white')
             fig.tight_layout()
 
             self.dwt_canvas_widget = self.embed_plot(fig, self.dwt_plot_frame)
@@ -666,21 +666,21 @@ class PPGVisualizerApp(customtkinter.CTk):
     def create_preprocessing_plots(self):
         """Plots raw and filtered signals."""
         fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
-        fig.patch.set_facecolor('#2B2B2B')
+        fig.patch.set_facecolor('white')
 
-        ax1.plot(self.t, self.raw_infrared, color='cyan')
-        ax1.set_title(f"Raw Infrared Signal (fs = {self.fs:.1f} Hz)", color='white')
-        ax1.set_xlabel("Time (s)", color='white')
-        ax1.set_ylabel("Amplitude", color='white')
-        ax1.tick_params(colors='white')
-        ax1.set_facecolor('#3C3C3C')
+        ax1.plot(self.t, self.raw_infrared, color='red')
+        ax1.set_title(f"Raw Infrared Signal (fs = {self.fs:.1f} Hz)", color='black')
+        ax1.set_xlabel("Time (s)", color='black')
+        ax1.set_ylabel("Amplitude", color='black')
+        ax1.tick_params(colors='black')
+        ax1.set_facecolor('white')
 
-        ax2.plot(self.t, self.filtered_infrared, color='magenta')
-        ax2.set_title("Preprocessed (Filtered) Infrared Signal", color='white')
-        ax2.set_xlabel("Time (s)", color='white')
-        ax2.set_ylabel("Normalized Amplitude", color='white')
-        ax2.tick_params(colors='white')
-        ax2.set_facecolor('#3C3C3C')
+        ax2.plot(self.t, self.filtered_infrared, color='blue')
+        ax2.set_title("Preprocessed (Filtered) Infrared Signal", color='black')
+        ax2.set_xlabel("Time (s)", color='black')
+        ax2.set_ylabel("Normalized Amplitude", color='black')
+        ax2.tick_params(colors='black')
+        ax2.set_facecolor('white')
 
         fig.tight_layout()
         widget = self.embed_plot(fig, self.preprocess_plot_frame)
@@ -691,34 +691,34 @@ class PPGVisualizerApp(customtkinter.CTk):
 
         # 1. Create the plot (3 subplots)
         fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, figsize=(10, 10)) # Adjusted figsize
-        fig.patch.set_facecolor('#2B2B2B')
+        fig.patch.set_facecolor('white')
 
         # --- Plot 1: Peak Detection ---
-        ax1.plot(self.t, hrv_signal, color='magenta', label='Bandpassed Signal')
-        ax1.plot(self.t[peak_indices], hrv_signal[peak_indices], 'x', color='red', markersize=8, label='Detected Peaks')
-        ax1.set_title(f"Peak Detection on Bandpassed Signal", color='white')
-        ax1.set_ylabel("Amplitude", color='white')
-        ax1.tick_params(colors='white', labelbottom=False) # Hide x-labels
-        ax1.set_facecolor('#3C3C3C')
+        ax1.plot(self.t, hrv_signal, color='red', label='Bandpassed Signal')
+        ax1.plot(self.t[peak_indices], hrv_signal[peak_indices], 'x', color='blue', markersize=8, label='Detected Peaks')
+        ax1.set_title(f"Peak Detection on Bandpassed Signal", color='black')
+        ax1.set_ylabel("Amplitude", color='black')
+        ax1.tick_params(colors='black', labelbottom=False) # Hide x-labels
+        ax1.set_facecolor('white')
         ax1.legend()
 
         # --- Plot 2: RR Tachogram ---
-        ax2.plot(peak_times_sec[1:], rr_intervals_ms, marker='o', linestyle='-', markersize=4, color='cyan')
-        ax2.set_title(f"RR Interval Tachogram", color='white')
-        ax2.set_ylabel("RR Interval (ms)", color='white')
-        ax2.tick_params(colors='white', labelbottom=False) # Hide x-labels
-        ax2.set_facecolor('#3C3C3C')
+        ax2.plot(peak_times_sec[1:], rr_intervals_ms, marker='o', linestyle='-', markersize=4, color='blue')
+        ax2.set_title(f"RR Interval Tachogram", color='black')
+        ax2.set_ylabel("RR Interval (ms)", color='black')
+        ax2.tick_params(colors='black', labelbottom=False) # Hide x-labels
+        ax2.set_facecolor('white')
         ax2.sharex(ax1) # Link x-axis with ax1
 
         # --- Plot 3: Poincaré Plot ---
         rr_n = rr_intervals_ms[:-1]
         rr_n1 = rr_intervals_ms[1:]
         ax3.scatter(rr_n, rr_n1, color='lime', alpha=0.5, s=10) # Use scatter
-        ax3.set_title("Poincaré Plot", color='white')
-        ax3.set_xlabel("RRn (ms)", color='white')
-        ax3.set_ylabel("RRn+1 (ms)", color='white')
-        ax3.tick_params(colors='white')
-        ax3.set_facecolor('#3C3C3C')
+        ax3.set_title("Poincaré Plot", color='black')
+        ax3.set_xlabel("RRn (ms)", color='black')
+        ax3.set_ylabel("RRn+1 (ms)", color='black')
+        ax3.tick_params(colors='black')
+        ax3.set_facecolor('white')
         min_rr = np.min(rr_intervals_ms)
         max_rr = np.max(rr_intervals_ms)
         ax3.plot([min_rr, max_rr], [min_rr, max_rr], color='gray', linestyle='--')
@@ -757,15 +757,15 @@ class PPGVisualizerApp(customtkinter.CTk):
 
         # 1. Create the plot (2 subplots)
         fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 8)) # Adjusted figsize
-        fig.patch.set_facecolor('#2B2B2B')
+        fig.patch.set_facecolor('white')
 
         # --- Plot 1: PSD ---
-        ax1.plot(fxx, pxx, color='cyan')
-        ax1.set_title(f"RR Interval Power Spectral Density (Welch's)", color='white')
-        ax1.set_xlabel("Frequency (Hz)", color='white')
-        ax1.set_ylabel("Power (s^2/Hz)", color='white') # Use ^2
-        ax1.tick_params(colors='white')
-        ax1.set_facecolor('#3C3C3C')
+        ax1.plot(fxx, pxx, color='red')
+        ax1.set_title(f"RR Interval Power Spectral Density (Welch's)", color='black')
+        ax1.set_xlabel("Frequency (Hz)", color='black')
+        ax1.set_ylabel("Power (s^2/Hz)", color='black') # Use ^2
+        ax1.tick_params(colors='black')
+        ax1.set_facecolor('white')
         ax1.axvspan(0.003, 0.04, color='blue', alpha=0.3, label='VLF (0.003-0.04 Hz)')
         ax1.axvspan(0.04, 0.15, color='green', alpha=0.3, label='LF (0.04-0.15 Hz)')
         ax1.axvspan(0.15, 0.4, color='red', alpha=0.3, label='HF (0.15-0.4 Hz)')
@@ -776,11 +776,11 @@ class PPGVisualizerApp(customtkinter.CTk):
         lfnu = features.get('LFnu', 0)
         hfnu = features.get('HFnu', 0)
         ax2.plot(lfnu, hfnu, marker='o', markersize=10, color='lime', linestyle='')
-        ax2.set_title("Autonomic Balance Diagram", color='white')
-        ax2.set_xlabel("Normalized LF Power (LFnu %)", color='white')
-        ax2.set_ylabel("Normalized HF Power (HFnu %)", color='white')
-        ax2.tick_params(colors='white')
-        ax2.set_facecolor('#3C3C3C')
+        ax2.set_title("Autonomic Balance Diagram", color='black')
+        ax2.set_xlabel("Normalized LF Power (LFnu %)", color='black')
+        ax2.set_ylabel("Normalized HF Power (HFnu %)", color='black')
+        ax2.tick_params(colors='black')
+        ax2.set_facecolor('white')
         ax2.set_xlim(0, 100)
         ax2.set_ylim(0, 100)
         ax2.grid(True, linestyle='--', alpha=0.6)
@@ -792,7 +792,7 @@ class PPGVisualizerApp(customtkinter.CTk):
         ax2.axhline(66.6, color='gray', linestyle=':')
         # Add text labels (simplified for 3x3 grid)
         ax2.text(83, 17, 'Sympathetic', color='orange', ha='center', va='center', alpha=0.7)
-        ax2.text(17, 83, 'Parasympathetic', color='cyan', ha='center', va='center', alpha=0.7)
+        ax2.text(17, 83, 'Parasympathetic', color='red', ha='center', va='center', alpha=0.7)
         ax2.text(17, 17, 'Low Tone', color='gray', ha='center', va='center', alpha=0.7)
         ax2.text(50, 50, 'Balanced', color='white', ha='center', va='center', alpha=0.7)
         ax2.text(83, 83, 'High Tone', color='gray', ha='center', va='center', alpha=0.7)
@@ -818,7 +818,7 @@ class PPGVisualizerApp(customtkinter.CTk):
         """Plots the DWT-based RR peaks and VR FFT."""
 
         fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
-        fig.patch.set_facecolor('#2B2B2B')
+        fig.patch.set_facecolor('white')
 
         fs_level_rr = self.fs
         duration_s_rr = len(rr_signal) / fs_level_rr
@@ -830,26 +830,26 @@ class PPGVisualizerApp(customtkinter.CTk):
 
         ax1.plot(t_level_rr, rr_signal, color='lime', label=f'd{rr_level} Signal')
         ax1.plot(t_level_rr[rr_peaks], rr_signal[rr_peaks], 'x', color='red', label='Detected Peaks')
-        ax1.set_title(bpm_title, color='white')
-        ax1.set_xlabel("Time (s)", color='white')
-        ax1.set_ylabel("Amplitude", color='white')
+        ax1.set_title(bpm_title, color='black')
+        ax1.set_xlabel("Time (s)", color='black')
+        ax1.set_ylabel("Amplitude", color='black')
         ax1.legend()
-        ax1.tick_params(colors='white')
-        ax1.set_facecolor('#3C3C3C')
+        ax1.tick_params(colors='black')
+        ax1.set_facecolor('white')
 
         # Vasometric FFT Plot
         f_low_vr, f_high_vr = self.get_freq_range(vr_level)
         vaso_title = f"Vasometric Rate FFT (from d{vr_level}: [{f_low_vr:.3f}-{f_high_vr:.3f} Hz])"
 
-        ax2.plot(vr_freqs, vr_mag, color='yellow', label=f'FFT of d{vr_level}')
+        ax2.plot(vr_freqs, vr_mag, color='blue', label=f'FFT of d{vr_level}')
         ax2.plot(vr_peak_freq, vr_peak_mag, 'x', color='red', label=f'Peak: {vr_peak_freq:.3f} Hz')
-        ax2.set_title(vaso_title, color='white')
-        ax2.set_xlabel("Frequency (Hz)", color='white')
-        ax2.set_ylabel("Magnitude", color='white')
+        ax2.set_title(vaso_title, color='black')
+        ax2.set_xlabel("Frequency (Hz)", color='black')
+        ax2.set_ylabel("Magnitude", color='black')
         ax2.set_xlim(0, 0.5)
         ax2.legend()
-        ax2.tick_params(colors='white')
-        ax2.set_facecolor('#3C3C3C')
+        ax2.tick_params(colors='black')
+        ax2.set_facecolor('white')
 
         fig.tight_layout()
         self.dwt_rate_canvas_widget = self.embed_plot(fig, self.dwt_rate_plot_frame)
@@ -901,16 +901,16 @@ class PPGVisualizerApp(customtkinter.CTk):
 
             # --- 3. Plot Q ---
             fig, ax = plt.subplots(figsize=(10, 6))
-            fig.patch.set_facecolor('#2B2B2B')
+            fig.patch.set_facecolor('white')
             for j in range(8):
                 ax.plot(i_vals_plot, Q[j], label=f"Q{j+1}")
-            ax.set_title(f'DWT Cascaded Filter Response (fs = {self.fs:.1f} Hz)', color='white')
-            ax.set_xlabel('Frequency (Hz)', color='white')
-            ax.set_ylabel('Magnitude', color='white')
+            ax.set_title(f'DWT Cascaded Filter Response (fs = {self.fs:.1f} Hz)', color='black')
+            ax.set_xlabel('Frequency (Hz)', color='black')
+            ax.set_ylabel('Magnitude', color='black')
             ax.legend()
             ax.grid(True, linestyle='--', alpha=0.6)
-            ax.tick_params(colors='white')
-            ax.set_facecolor('#3C3C3C')
+            ax.tick_params(colors='black')
+            ax.set_facecolor('white')
             fig.tight_layout()
 
             self.filter_canvas_widget = self.embed_plot(fig, self.filter_plot_frame)
