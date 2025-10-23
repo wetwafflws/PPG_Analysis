@@ -182,15 +182,56 @@ class PPGVisualizerApp(customtkinter.CTk):
     def downsample(self, x):
         return x[::2]
 
+    def dirac(self, x):
+        return 1 if x == 0 else 0
+
     def dwt(self, x, J):
-        a = x
-        d = []
-        for j in range(J):
-            d_j = self.downsample(self.hpf(a))
-            a_j = self.downsample(self.lpf(a))
-            d.append(d_j)
-            a = a_j
-        return a, d
+        length = len(x)
+        d_coeffs_list = []
+        for j in range(1, J+1):
+            start_k = -(round(2**j) + round(2**(j-1)) - 2)
+            end_k = -(1 - round(2**(j-1)))
+            q_values = []
+            for k in range(start_k, end_k + 1):
+                if j == 1:
+                    q_k = -2 * (self.dirac(k) - self.dirac(k+1))
+                elif j == 2:
+                    q_k = -1/4 * (self.dirac(k-1) + 3*self.dirac(k) + 2*self.dirac(k+1) - 2*self.dirac(k+2) - 3*self.dirac(k+3) - self.dirac(k+4))
+                elif j == 3:
+                    q_k = -1/32 * (self.dirac(k-3) + 3*self.dirac(k-2) + 6*self.dirac(k-1) + 10*self.dirac(k) + 11*self.dirac(k+1) + 9*self.dirac(k+2) + 4*self.dirac(k+3) - 4*self.dirac(k+4) - 9*self.dirac(k+5) - 11*self.dirac(k+6) - 10*self.dirac(k+7) - 6*self.dirac(k+8) - 3*self.dirac(k+9) - self.dirac(k+10))
+                elif j == 4:
+                    q_k = -1/256 * (self.dirac(k-7) + 3*self.dirac(k-6) + 6*self.dirac(k-5) + 10*self.dirac(k-4) + 15*self.dirac(k-3) + 21*self.dirac(k-2) + 28*self.dirac(k-1) + 36*self.dirac(k) + 41*self.dirac(k+1) + 43*self.dirac(k+2) + 42*self.dirac(k+3) + 38*self.dirac(k+4) + 31*self.dirac(k+5) + 21*self.dirac(k+6) + 8*self.dirac(k+7) - 8*self.dirac(k+8) - 21*self.dirac(k+9) - 31*self.dirac(k+10) - 38*self.dirac(k+11) - 42*self.dirac(k+12) - 43*self.dirac(k+13) - 41*self.dirac(k+14) - 36*self.dirac(k+15) - 28*self.dirac(k+16) - 21*self.dirac(k+17) - 15*self.dirac(k+18) - 10*self.dirac(k+19) - 6*self.dirac(k+20) - 3*self.dirac(k+21) - self.dirac(k+22))
+                elif j == 5:
+                    q_k = -1/2048 * (self.dirac(k-15) + 3*self.dirac(k-14) + 6*self.dirac(k-13) + 10*self.dirac(k-12) + 15*self.dirac(k-11) + 21*self.dirac(k-10) + 28*self.dirac(k-9) + 36*self.dirac(k-8) + 45*self.dirac(k-7) + 55*self.dirac(k-6) + 66*self.dirac(k-5) + 78*self.dirac(k-4) + 91*self.dirac(k-3) + 105*self.dirac(k-2) + 120*self.dirac(k-1) + 136*self.dirac(k) + 149*self.dirac(k+1) + 159*self.dirac(k+2) + 166*self.dirac(k+3) + 170*self.dirac(k+4) + 171*self.dirac(k+5) + 169*self.dirac(k+6) + 164*self.dirac(k+7) + 156*self.dirac(k+8) + 145*self.dirac(k+9) + 131*self.dirac(k+10) + 114*self.dirac(k+11) + 94*self.dirac(k+12) + 71*self.dirac(k+13) + 45*self.dirac(k+14) + 16*self.dirac(k+15) - 16*self.dirac(k+16) - 45*self.dirac(k+17) - 71*self.dirac(k+18) - 94*self.dirac(k+19) - 114*self.dirac(k+20) - 131*self.dirac(k+21) - 145*self.dirac(k+22) - 156*self.dirac(k+23) - 164*self.dirac(k+24) - 169*self.dirac(k+25) - 171*self.dirac(k+26) - 170*self.dirac(k+27) - 166*self.dirac(k+28) - 159*self.dirac(k+29) - 149*self.dirac(k+30) - 136*self.dirac(k+31) - 120*self.dirac(k+32) - 105*self.dirac(k+33) - 91*self.dirac(k+34) - 78*self.dirac(k+35) - 66*self.dirac(k+36) - 55*self.dirac(k+37) - 45*self.dirac(k+38) - 36*self.dirac(k+39) - 28*self.dirac(k+40) - 21*self.dirac(k+41) - 15*self.dirac(k+42) - 10*self.dirac(k+43) - 6*self.dirac(k+44) - 3*self.dirac(k+45) - self.dirac(k+46))
+                elif j == 6:
+                    coeffs = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276, 300, 325, 351, 378, 406, 435, 465, 496, 528, 557, 583, 606, 626, 643, 657, 668, 676, 681, 683, 682, 678, 671, 661, 648, 632, 613, 591, 566, 538, 507, 473, 436, 396, 353, 307, 258, 206, 151, 93, 32, -32, -93, -151, -206, -258, -307, -353, -396, -436, -473, -507, -538, -566, -591, -613, -632, -648, -661, -671, -678, -682, -683, -681, -676, -668, -657, -643, -626, -606, -583, -557, -528, -496, -465, -435, -406, -378, -351, -325, -300, -276, -253, -231, -210, -190, -171, -153, -136, -120, -105, -91, -78, -66, -55, -45, -36, -28, -21, -15, -10, -6, -3, -1]
+                    q_k = 0
+                    for idx, coef in enumerate(coeffs):
+                        q_k += coef * self.dirac(k - 31 + idx)
+                    q_k *= -1 / 16384
+                elif j == 7:
+                    coeffs = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276, 300, 325, 351, 378, 406, 435, 465, 496, 528, 561, 595, 630, 666, 703, 741, 780, 820, 861, 903, 946, 990, 1035, 1081, 1128, 1176, 1225, 1275, 1326, 1378, 1431, 1485, 1540, 1596, 1653, 1711, 1770, 1830, 1891, 1953, 2016, 2080, 2141, 2199, 2254, 2306, 2355, 2401, 2444, 2484, 2521, 2555, 2586, 2614, 2639, 2661, 2680, 2696, 2709, 2719, 2726, 2730, 2731, 2729, 2724, 2716, 2705, 2691, 2674, 2654, 2631, 2605, 2576, 2544, 2509, 2471, 2430, 2386, 2339, 2289, 2236, 2180, 2121, 2059, 1994, 1926, 1855, 1781, 1704, 1624, 1541, 1455, 1366, 1274, 1179, 1081, 980, 876, 769, 659, 546, 430, 311, 189, 64, -64, -189, -311, -430, -546, -659, -769, -876, -980, -1081, -1179, -1274, -1366, -1455, -1541, -1624, -1704, -1781, -1855, -1926, -1994, -2059, -2121, -2180, -2236, -2289, -2339, -2386, -2430, -2471, -2509, -2544, -2576, -2605, -2631, -2654, -2674, -2691, -2705, -2716, -2724, -2729, -2731, -2730, -2726, -2719, -2709, -2696, -2680, -2661, -2639, -2614, -2586, -2555, -2521, -2484, -2444, -2401, -2355, -2306, -2254, -2199, -2141, -2080, -2016, -1953, -1891, -1830, -1770, -1711, -1653, -1596, -1540, -1485, -1431, -1378, -1326, -1275, -1225, -1176, -1128, -1081, -1035, -990, -946, -903, -861, -820, -780, -741, -703, -666, -630, -595, -561, -528, -496, -465, -435, -406, -378, -351, -325, -300, -276, -253, -231, -210, -190, -171, -153, -136, -120, -105, -91, -78, -66, -55, -45, -36, -28, -21, -15, -10, -6, -3, -1]
+                    q_k = 0
+                    for idx, coef in enumerate(coeffs):
+                        q_k += coef * self.dirac(k - 63 + idx)
+                    q_k *= -1 / 131072
+                elif j == 8:
+                    coeffs = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276, 300, 325, 351, 378, 406, 435, 465, 496, 528, 561, 595, 630, 666, 703, 741, 780, 820, 861, 903, 946, 990, 1035, 1081, 1128, 1176, 1225, 1275, 1326, 1378, 1431, 1485, 1540, 1596, 1653, 1711, 1770, 1830, 1891, 1953, 2016, 2080, 2145, 2211, 2278, 2346, 2415, 2485, 2556, 2628, 2701, 2775, 2850, 2926, 3003, 3081, 3160, 3240, 3321, 3403, 3486, 3570, 3655, 3741, 3828, 3916, 4005, 4095, 4186, 4278, 4371, 4465, 4560, 4656, 4753, 4851, 4950, 5050, 5151, 5253, 5356, 5460, 5565, 5671, 5778, 5886, 5995, 6105, 6216, 6328, 6441, 6555, 6670, 6786, 6903, 7021, 7140, 7260, 7381, 7503, 7626, 7750, 7875, 8001, 8128, 8256, 8381, 8503, 8622, 8738, 8851, 8961, 9068, 9172, 9273, 9371, 9466, 9558, 9647, 9733, 9816, 9896, 9973, 10047, 10118, 10186, 10251, 10313, 10372, 10428, 10481, 10531, 10578, 10622, 10663, 10701, 10736, 10768, 10797, 10823, 10846, 10866, 10883, 10897, 10908, 10916, 10921, 10923, 10922, 10918, 10911, 10901, 10888, 10872, 10853, 10831, 10806, 10778, 10747, 10713, 10676, 10636, 10593, 10547, 10498, 10446, 10391, 10333, 10272, 10208, 10141, 10071, 9998, 9922, 9843, 9761, 9676, 9588, 9497, 9403, 9306, 9206, 9103, 8997, 8888, 8776, 8661, 8543, 8422, 8298, 8171, 8041, 7908, 7772, 7633, 7491, 7346, 7198, 7047, 6893, 6736, 6576, 6413, 6247, 6078, 5906, 5731, 5553, 5372, 5188, 5001, 4811, 4618, 4422, 4223, 4021, 3816, 3608, 3397, 3183, 2966, 2746, 2523, 2297, 2068, 1836, 1601, 1363, 1122, 878, 631, 381, 128, -128, -381, -631, -878, -1122, -1363, -1601, -1836, -2068, -2297, -2523, -2746, -2966, -3183, -3397, -3608, -3816, -4021, -4223, -4422, -4618, -4811, -5001, -5188, -5372, -5553, -5731, -5906, -6078, -6247, -6413, -6576, -6736, -6893, -7047, -7198, -7346, -7491, -7633, -7772, -7908, -8041, -8171, -8298, -8422, -8543, -8661, -8776, -8888, -8997, -9103, -9206, -9306, -9403, -9497, -9588, -9676, -9761, -9843, -9922, -9998, -10071, -10141, -10208, -10272, -10333, -10391, -10446, -10498, -10547, -10593, -10636, -10676, -10713, -10747, -10778, -10806, -10831, -10853, -10872, -10888, -10901, -10911, -10918, -10922, -10923, -10921, -10916, -10908, -10897, -10883, -10866, -10846, -10823, -10797, -10768, -10736, -10701, -10663, -10622, -10578, -10531, -10481, -10428, -10372, -10313, -10251, -10186, -10118, -10047, -9973, -9896, -9816, -9733, -9647, -9558, -9466, -9371, -9172, -9068, -8961, -8851, -8738, -8622, -8503, -8381, -8256, -8128, -8001, -7875, -7750, -7626, -7503, -7381, -7260, -7140, -7021, -6903, -6786, -6670, -6555, -6441, -6328, -6216, -6105, -5995, -5886, -5778, -5671, -5565, -5460, -5356, -5253, -5151, -5050, -4950, -4851, -4753, -4656, -4560, -4465, -4371, -4278, -4186, -4095, -4005, -3916, -3828, -3741, -3655, -3570, -3486, -3403, -3321, -3240, -3160, -3081, -3003, -2926, -2850, -2775, -2701, -2628, -2556, -2485, -2415, -2346, -2278, -2211, -2145, -2080, -2016, -1953, -1891, -1830, -1770, -1711, -1653, -1596, -1540, -1485, -1431, -1378, -1326, -1275, -1225, -1176, -1128, -1081, -1035, -990, -946, -903, -861, -820, -780, -741, -703, -666, -630, -595, -561, -528, -496, -465, -435, -406, -378, -351, -325, -300, -276, -253, -231, -210, -190, -171, -153, -136, -120, -105, -91, -78, -66, -55, -45, -36, -28, -21, -15, -10, -6, -3, -1]
+                    q_k = 0
+                    for idx, coef in enumerate(coeffs):
+                        q_k += coef * self.dirac(k - 127 + idx)
+                    q_k *= -1 / 1048576
+                q_values.append(q_k)
+            # now compute the convolution
+            d_j = np.zeros(length)
+            for x_idx in range(length):
+                for k_idx in range(len(q_values)):
+                    k = start_k + k_idx
+                    signal_idx = x_idx - k
+                    if 0 <= signal_idx < length:
+                        d_j[x_idx] += x[signal_idx] * q_values[k_idx]
+            d_coeffs_list.append(d_j)
+        return x, d_coeffs_list
 
     # --- 4. Main Application Logic ---
 
@@ -212,11 +253,10 @@ class PPGVisualizerApp(customtkinter.CTk):
             self.t = self.original_t
             self.raw_infrared = self.original_raw_infrared
             self.fs = self.original_fs
+            self.filtered_infrared = self.preprocess_signal(self.raw_infrared, fs=self.fs)
 
             self.fs_entry.delete(0, 'end')
             self.fs_entry.insert(0, str(self.fs))
-
-            self.process_and_display_data()
 
         except Exception as e:
             err_text = f"Error loading file: {e}\n\n"
@@ -237,9 +277,6 @@ class PPGVisualizerApp(customtkinter.CTk):
                 raise ValueError("Sample rate must be positive.")
         except ValueError as e:
             self.show_error_in_hrv_time_tab(f"Invalid sample rate: {e}")
-            return
-
-        if new_fs == self.fs:
             return
 
         self.clear_existing_plots()
@@ -292,8 +329,15 @@ class PPGVisualizerApp(customtkinter.CTk):
         if len(self.filtered_infrared) == 0:
             raise ValueError("No data loaded. Please load a CSV file.")
 
+        # Apply 4th order Butterworth bandpass 0.1-40 Hz for HRV
+        nyquist = self.fs / 2
+        lowcut = 0.1
+        highcut = min(40.0, nyquist - 1.0)
+        b, a = butter(4, [lowcut / nyquist, highcut / nyquist], btype='band')
+        hrv_signal = filtfilt(b, a, self.filtered_infrared)
+
         min_dist_samples = int(self.fs * 0.4) # Min dist 0.4s (max 150 BPM)
-        peak_indices, _ = find_peaks(self.filtered_infrared, height=0, distance=max(1, min_dist_samples))
+        peak_indices, _ = find_peaks(hrv_signal, height=0, distance=max(1, min_dist_samples))
 
         if len(peak_indices) < 2:
             raise ValueError("Not enough peaks found (< 2) to calculate RR intervals.")
@@ -305,7 +349,7 @@ class PPGVisualizerApp(customtkinter.CTk):
         if len(rr_intervals_sec) < 2:
             raise ValueError("Not enough RR intervals (< 2) for analysis.")
 
-        return peak_indices, peak_times_sec, rr_intervals_sec, rr_intervals_ms
+        return peak_indices, peak_times_sec, rr_intervals_sec, rr_intervals_ms, hrv_signal
 
     def run_hrv_time_analysis(self):
         """Finds peaks and calculates time-domain HRV features."""
@@ -316,11 +360,11 @@ class PPGVisualizerApp(customtkinter.CTk):
             widget.destroy()
 
         try:
-            peak_indices, peak_times_sec, rr_intervals_sec, rr_intervals_ms = self._get_rr_intervals()
+            peak_indices, peak_times_sec, rr_intervals_sec, rr_intervals_ms, hrv_signal = self._get_rr_intervals()
 
             features = self.calculate_time_domain_features(rr_intervals_ms)
 
-            self.create_hrv_time_plots(peak_indices, peak_times_sec, rr_intervals_ms, features)
+            self.create_hrv_time_plots(peak_indices, peak_times_sec, rr_intervals_ms, features, hrv_signal)
 
         except Exception as e:
             self.show_error_in_hrv_time_tab(f"Error during Time analysis: {e}")
@@ -384,7 +428,7 @@ class PPGVisualizerApp(customtkinter.CTk):
             widget.destroy()
 
         try:
-            peak_indices, peak_times_sec, rr_intervals_sec, rr_intervals_ms = self._get_rr_intervals()
+            peak_indices, peak_times_sec, rr_intervals_sec, rr_intervals_ms, _ = self._get_rr_intervals()
 
             rr_times_sec = peak_times_sec[1:] # Time of each RR interval
 
@@ -471,26 +515,35 @@ class PPGVisualizerApp(customtkinter.CTk):
         mean = np.mean(data)
         std = np.std(data)
         normalized = (data - mean) / std
-
+        """
         nyquist = fs / 2
-        lowcut = 0.5
+        lowcut = 0.02
         highcut = min(40.0, nyquist - 1.0)
 
         if highcut <= lowcut:
              return normalized
 
-        b, a = butter(5, [lowcut, highcut], btype='band', fs=fs)
+        b, a = butter(8, highcut, btype='highpass', fs=fs)
         filtered = filtfilt(b, a, normalized)
         return filtered
+        """
+        return normalized
 
     def analyze_respiratory(self, d_signal, level):
         """Finds respiratory peaks from the selected d-signal."""
-        fs_level = self.fs / (2**level)
+        fs_level = self.fs
 
         min_distance_samples = fs_level * 0.5
         safe_distance = max(1, int(np.ceil(min_distance_samples)))
 
-        peaks, _ = find_peaks(d_signal, height=np.mean(d_signal), distance=safe_distance)
+        # Apply moving average filter to reduce spurious peaks
+        window_size = int(fs_level * 0.5)  # 0.5 second window
+        if window_size > 1:
+            smoothed_signal = np.convolve(d_signal, np.ones(window_size)/window_size, mode='same')
+        else:
+            smoothed_signal = d_signal
+
+        peaks, _ = find_peaks(smoothed_signal, prominence=np.mean(np.abs(smoothed_signal)) * 0.5, distance=safe_distance)
 
         duration_s = len(d_signal) / fs_level
         num_peaks = len(peaks)
@@ -501,7 +554,7 @@ class PPGVisualizerApp(customtkinter.CTk):
     def analyze_vasometric(self, d_signal, level):
         """Calculates FFT for the selected d-signal."""
         n = len(d_signal)
-        fs_level = self.fs / (2**level)
+        fs_level = self.fs
 
         if fs_level <= 0: return np.array([]), np.array([]), 0, 0
 
@@ -607,7 +660,7 @@ class PPGVisualizerApp(customtkinter.CTk):
             signal_data = self.dwt_coeffs[scale_j - 1]
             f_low, f_high = self.get_freq_range(scale_j)
 
-            fs_level = self.fs / (2**scale_j)
+            fs_level = self.fs
             duration_s = len(signal_data) / fs_level
             t_level = np.linspace(0, duration_s, len(signal_data))
 
@@ -653,7 +706,7 @@ class PPGVisualizerApp(customtkinter.CTk):
         widget = self.embed_plot(fig, self.preprocess_plot_frame)
         self.canvas_list.append(widget)
 
-    def create_hrv_time_plots(self, peak_indices, peak_times_sec, rr_intervals_ms, features):
+    def create_hrv_time_plots(self, peak_indices, peak_times_sec, rr_intervals_ms, features, hrv_signal):
         """Plots peak detection, tachogram, Poincaré, and displays features."""
 
         # 1. Create the plot (3 subplots)
@@ -661,9 +714,9 @@ class PPGVisualizerApp(customtkinter.CTk):
         fig.patch.set_facecolor('#2B2B2B')
 
         # --- Plot 1: Peak Detection ---
-        ax1.plot(self.t, self.filtered_infrared, color='magenta', label='Filtered Signal')
-        ax1.plot(self.t[peak_indices], self.filtered_infrared[peak_indices], 'x', color='red', markersize=8, label='Detected Peaks')
-        ax1.set_title(f"Peak Detection on Preprocessed Signal", color='white')
+        ax1.plot(self.t, hrv_signal, color='magenta', label='Bandpassed Signal')
+        ax1.plot(self.t[peak_indices], hrv_signal[peak_indices], 'x', color='red', markersize=8, label='Detected Peaks')
+        ax1.set_title(f"Peak Detection on Bandpassed Signal", color='white')
         ax1.set_ylabel("Amplitude", color='white')
         ax1.tick_params(colors='white', labelbottom=False) # Hide x-labels
         ax1.set_facecolor('#3C3C3C')
@@ -778,7 +831,7 @@ class PPGVisualizerApp(customtkinter.CTk):
         fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
         fig.patch.set_facecolor('#2B2B2B')
 
-        fs_level_rr = self.fs / (2**rr_level)
+        fs_level_rr = self.fs
         duration_s_rr = len(rr_signal) / fs_level_rr
         t_level_rr = np.linspace(0, duration_s_rr, len(rr_signal))
 
