@@ -222,16 +222,9 @@ class PPGVisualizerApp(customtkinter.CTk):
                         q_k += coef * self.dirac(k - 127 + idx)
                     q_k *= -1 / 1048576
                 q_values.append(q_k)
-            # now compute the convolution
-            d_j = np.zeros(length)
-            for x_idx in range(length):
-                for k_idx in range(len(q_values)):
-                    k = start_k + k_idx
-                    signal_idx = x_idx - k
-                    if 0 <= signal_idx < length:
-                        d_j[x_idx] += x[signal_idx] * q_values[k_idx]
+            d_j = np.convolve(q_values, x, mode='same')
             d_coeffs_list.append(d_j)
-        return x, d_coeffs_list
+        return None, d_coeffs_list
 
     # --- 4. Main Application Logic ---
 
@@ -310,9 +303,8 @@ class PPGVisualizerApp(customtkinter.CTk):
         """Runs the preprocessing and DWT steps."""
         self.filtered_infrared = self.preprocess_signal(self.raw_infrared, fs=self.fs)
 
-        a, d_coeffs_list = self.dwt(self.filtered_infrared, J=8)
+        _, d_coeffs_list = self.dwt(self.filtered_infrared, J=8)
         self.dwt_coeffs = d_coeffs_list
-
         self.create_preprocessing_plots()
 
         default_dwt_scale = "Scale 1"
@@ -511,22 +503,10 @@ class PPGVisualizerApp(customtkinter.CTk):
     # --- Signal Processing Helpers ---
 
     def preprocess_signal(self, data, fs):
-        """Applies normalization and bandpass filtering."""
+        """Applies normalization."""
         mean = np.mean(data)
         std = np.std(data)
         normalized = (data - mean) / std
-        """
-        nyquist = fs / 2
-        lowcut = 0.02
-        highcut = min(40.0, nyquist - 1.0)
-
-        if highcut <= lowcut:
-             return normalized
-
-        b, a = butter(8, highcut, btype='highpass', fs=fs)
-        filtered = filtfilt(b, a, normalized)
-        return filtered
-        """
         return normalized
 
     def analyze_respiratory(self, d_signal, level):
