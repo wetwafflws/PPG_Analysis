@@ -689,8 +689,8 @@ class PPGVisualizerApp(customtkinter.CTk):
     def create_hrv_time_plots(self, peak_indices, peak_times_sec, rr_intervals_ms, features, hrv_signal):
         """Plots peak detection, tachogram, Poincaré, and displays features."""
 
-        # 1. Create the plot (3 subplots)
-        fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, figsize=(10, 10)) # Adjusted figsize
+        # 1. Create the plot (4 subplots)
+        fig, (ax1, ax2, ax3, ax4) = plt.subplots(nrows=4, ncols=1, figsize=(10, 12)) # Adjusted figsize
         fig.patch.set_facecolor('white')
 
         # --- Plot 1: Peak Detection ---
@@ -732,6 +732,19 @@ class PPGVisualizerApp(customtkinter.CTk):
         center_y = np.mean(rr_n1)
         ellipse = Ellipse((center_x, center_y), width=2*sd2, height=2*sd1, angle=45, alpha=0.3, color='red')
         ax3.add_patch(ellipse)
+
+        # --- Plot 4: RR Interval Histogram ---
+        mean_rr = np.mean(rr_intervals_ms)
+        diff = rr_intervals_ms - mean_rr
+        numerator = np.mean(diff**3)
+        denominator = (np.sqrt(np.mean(diff**2)))**3
+        skewness = numerator / denominator if denominator != 0 else 0
+        ax4.hist(rr_intervals_ms, bins=20, alpha=0.7, color='blue')
+        ax4.set_title(f"RR Interval Histogram (Skewness: {skewness:.3f})", color='black')
+        ax4.set_xlabel("RR Interval (ms)", color='black')
+        ax4.set_ylabel("Frequency", color='black')
+        ax4.tick_params(colors='black')
+        ax4.set_facecolor('white')
 
         fig.tight_layout(h_pad=2.0) # Add vertical padding
         self.hrv_time_canvas_widget = self.embed_plot(fig, self.hrv_time_plot_frame)
