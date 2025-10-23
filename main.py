@@ -543,7 +543,7 @@ class PPGVisualizerApp(customtkinter.CTk):
         else:
             smoothed_signal = d_signal
 
-        peaks, _ = find_peaks(smoothed_signal, prominence=np.mean(np.abs(smoothed_signal)) * 0.5, distance=safe_distance)
+        peaks, _ = find_peaks(smoothed_signal, prominence=np.mean(np.abs(smoothed_signal)) * 0.2, distance=safe_distance)
 
         duration_s = len(d_signal) / fs_level
         num_peaks = len(peaks)
@@ -743,6 +743,15 @@ class PPGVisualizerApp(customtkinter.CTk):
         max_rr = np.max(rr_intervals_ms)
         ax3.plot([min_rr, max_rr], [min_rr, max_rr], color='gray', linestyle='--')
         ax3.set_aspect('equal', adjustable='box')
+
+        # Add semi-transparent ellipse for SD1 and SD2
+        sd1 = np.std(rr_n1 - rr_n) / np.sqrt(2)
+        sd2 = np.sqrt(2 * np.var(rr_intervals_ms) - sd1**2)
+        from matplotlib.patches import Ellipse
+        center_x = np.mean(rr_n)
+        center_y = np.mean(rr_n1)
+        ellipse = Ellipse((center_x, center_y), width=2*sd2, height=2*sd1, angle=45, alpha=0.3, color='red')
+        ax3.add_patch(ellipse)
 
         fig.tight_layout(h_pad=2.0) # Add vertical padding
         self.hrv_time_canvas_widget = self.embed_plot(fig, self.hrv_time_plot_frame)
