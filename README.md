@@ -34,6 +34,11 @@ A Python application using CustomTkinter to visualize and analyze Photoplethysmo
 
 ## Setup
 
+### Prerequisites
+- **Python 3.8 or higher**: Download and install from [python.org](https://www.python.org/downloads/). Ensure `python` and `pip` are available in your PATH.
+
+### Installation Steps
+
 1.  **Clone the Repository:**
     ```bash
     git clone https://github.com/wetwafflws/PPG_Analysis.git
@@ -47,10 +52,15 @@ A Python application using CustomTkinter to visualize and analyze Photoplethysmo
     * Activate on Windows: `.\venv\Scripts\activate`
     * Activate on macOS/Linux: `source venv/bin/activate`
 
-3.  **Install Requirements:**
+3.  **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
+    This installs the required Python libraries:
+    - **CustomTkinter**: For the modern GUI interface.
+    - **NumPy**: For efficient numerical computations and array handling.
+    - **Matplotlib**: For creating and displaying plots.
+    - **SciPy**: For signal processing functions like filtering and FFT.
 
 ## Usage
 
@@ -82,6 +92,33 @@ A Python application using CustomTkinter to visualize and analyze Photoplethysmo
     * **DWT Decompositions:** Use the dropdown to select and view different DWT detail coefficients (d1-d8).
     * **DWT Rate Analysis:** Select the desired DWT scales for respiratory and vasometric analysis, then click "Run DWT Analysis".
 
-## Dependencies
+## Building the Executable
 
-Required Python libraries are listed in `requirements.txt`.
+To create a standalone executable (.exe) for Windows distribution:
+
+1. **Ensure Setup is Complete:** Follow the setup instructions above to create a virtual environment and install dependencies.
+
+2. **Install PyInstaller:**
+   ```bash
+   pip install pyinstaller
+   ```
+
+3. **Build the Executable:**
+   ```bash
+   pyinstaller --onefile --windowed main.py
+   ```
+   - `--onefile`: Creates a single executable file.
+   - `--windowed`: Hides the console window for a cleaner GUI experience.
+
+4. **Locate the Executable:** The resulting `main.exe` will be in the `dist/` folder.
+
+5. **Run the Application:**
+   - Place `main.exe` and any required CSV data files (e.g., `PPG_Data_1.csv`, `PPG_Data_2.csv`) in the same directory.
+   - Double-click `main.exe` to launch the PPG analysis GUI.
+
+**Notes:**
+- The executable is self-contained and includes all dependencies (NumPy, SciPy, Matplotlib, CustomTkinter, etc.), so it runs on Windows machines without requiring Python installation.
+- For distribution, ensure the CSV files are included if users need sample data.
+
+## Dependencies
+To install all dependencies run 
