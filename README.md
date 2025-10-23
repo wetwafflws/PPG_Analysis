@@ -62,6 +62,11 @@ A Python application using CustomTkinter to visualize and analyze Photoplethysmo
     - **Matplotlib**: For creating and displaying plots.
     - **SciPy**: For signal processing functions like filtering and FFT.
 
+    **Notes:**
+    - CustomTkinter requires Tkinter, which is included with standard Python installations.
+    - If installation fails, try upgrading pip: `pip install --upgrade pip`.
+    - Alternatively, install libraries individually: `pip install customtkinter numpy matplotlib scipy`.
+
 ## Usage
 
 1.  **Run the Script:**
@@ -120,5 +125,3 @@ To create a standalone executable (.exe) for Windows distribution:
 - The executable is self-contained and includes all dependencies (NumPy, SciPy, Matplotlib, CustomTkinter, etc.), so it runs on Windows machines without requiring Python installation.
 - For distribution, ensure the CSV files are included if users need sample data.
 
-## Dependencies
-To install all dependencies run 
