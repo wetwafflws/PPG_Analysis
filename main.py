@@ -308,6 +308,11 @@ class PPGVisualizerApp(customtkinter.CTk):
 
     def process_and_display_data(self):
         """Runs the preprocessing and DWT steps."""
+        try:
+            self.fs = float(self.fs_entry.get())
+        except ValueError:
+            pass  # Keep current fs if invalid
+
         self.filtered_infrared = self.preprocess_signal(self.raw_infrared, fs=self.fs)
 
         _, d_coeffs_list = self.dwt(self.filtered_infrared, J=8)
