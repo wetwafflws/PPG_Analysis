@@ -58,6 +58,13 @@ class PPGVisualizerApp(customtkinter.CTk):
         self.load_button = customtkinter.CTkButton(top_controls_frame, text="Load CSV File", command=self.load_csv_data)
         self.load_button.pack(side="left", padx=10, pady=10)
 
+        self.sampling_rate_label = customtkinter.CTkLabel(top_controls_frame, text="Original Sampling Rate (Hz):")
+        self.sampling_rate_label.pack(side="left", padx=(20,5), pady=10)
+
+        self.sampling_rate_entry = customtkinter.CTkEntry(top_controls_frame, width=100)
+        self.sampling_rate_entry.pack(side="left", padx=(0,10), pady=10)
+        self.sampling_rate_entry.insert(0, str(self.original_fs))
+
         self.resample_label = customtkinter.CTkLabel(top_controls_frame, text="New Sample Rate (Hz):")
         self.resample_label.pack(side="left", padx=(20, 0))
 
@@ -239,9 +246,9 @@ class PPGVisualizerApp(customtkinter.CTk):
         try:
             raw_data = np.loadtxt(file_path, delimiter=',', skiprows=1)
 
-            self.original_t = raw_data[:, 0] / 1000000.0
+            self.original_t = np.arange(len(raw_data)) / self.original_fs
             self.original_raw_infrared = raw_data[:, 2]
-            self.original_fs = 100.0
+            self.original_fs = float(self.sampling_rate_entry.get())
 
             self.t = self.original_t
             self.raw_infrared = self.original_raw_infrared

@@ -81,8 +81,7 @@ A Python application using CustomTkinter to visualize and analyze Photoplethysmo
         * A **1-row header** (which is skipped).
         * Comma (`,`) delimiters.
         * At least 3 columns.
-        * **Column 0:** Time data in **microseconds**.
-        * **Column 2:** Infrared PPG signal data.
+        * **Column 2:** Infrared PPG signal data. (Time column is ignored; sampling rate is set manually in the GUI)
         * The original sampling frequency is assumed to be **100 Hz**.
 
 3.  **Resample (Optional):**
